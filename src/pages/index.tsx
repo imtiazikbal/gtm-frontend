@@ -95,7 +95,7 @@ export default function GtmFullTest() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-4 md:p-12 font-sans text-slate-900">
-      <GTMHandler containerId="GTM-5M5VQSGZ" />
+      <GTMHandler containerId={activeGtm} />
 
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
