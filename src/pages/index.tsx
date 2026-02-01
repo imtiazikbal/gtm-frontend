@@ -2,7 +2,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
-import GTMHandler from '@/components/GTMHandler';
 
 export default function GtmFullTest() {
   const searchParams = useSearchParams();
@@ -86,7 +85,7 @@ export default function GtmFullTest() {
       
       addLog(`✅ SUCCESS: Tag & Trigger Created (Version ${data.versionId})`);
       setActiveGtm(config.containerId);
-    } catch (err: any) {
+    } catch (err) {
       addLog(`❌ ERROR: ${err.message}`);
     } finally {
       setLoading(false);
@@ -95,7 +94,6 @@ export default function GtmFullTest() {
 
   return (
     <main className="min-h-screen bg-slate-100 p-4 md:p-12 font-sans text-slate-900">
-      <GTMHandler containerId={activeGtm} />
 
       <div className="max-w-5xl mx-auto space-y-8">
         <header className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
