@@ -130,7 +130,6 @@ export default function GtmFullTest() {
                 <label className="text-xs font-bold uppercase text-slate-400">Container Public ID</label>
                 <input 
                   className="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-indigo-600" 
-                  placeholder="GTM-P6KXXXX"
                   value={config.containerId}
                   onChange={(e) => setConfig({...config, containerId: e.target.value})}
                 />
