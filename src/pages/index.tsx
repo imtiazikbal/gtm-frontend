@@ -86,7 +86,7 @@ export default function GtmFullTest() {
       addLog(`✅ SUCCESS: Tag & Trigger Created (Version ${data.versionId})`);
       setActiveGtm(config.containerId);
     } catch (err) {
-      addLog(`❌ ERROR: ${err.message}`);
+      addLog(`❌ ERROR: ${err instanceof Error ? err.message : 'Unknown error occurred'}`);
     } finally {
       setLoading(false);
     }
