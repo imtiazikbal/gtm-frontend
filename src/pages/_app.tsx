@@ -6,13 +6,12 @@ import Head from 'next/head';
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
-
-
-      {/* 2. Global Head settings */}
+      {/* 1. Global Head settings */}
       <Head>
         <title>GTM Automation Tester</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        {/* Google Tag Manager */}
+
+        {/* Google Tag Manager - Script */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
@@ -27,13 +26,22 @@ export default function App({ Component, pageProps }: AppProps) {
             `,
           }}
         />
-        {/* End Google Tag Manager */}
+        {/* End Google Tag Manager - Script */}
       </Head>
 
-      {/* 3. The Main Page Content */}
+      {/* Google Tag Manager - Noscript Fallback */}
+      <noscript>
+        <iframe
+          src="https://www.googletagmanager.com/ns.html?id=GTM-5M5VQSGZ"
+          height="0"
+          width="0"
+          style={{ display: 'none', visibility: 'hidden' }}
+        />
+      </noscript>
+      {/* End Google Tag Manager - Noscript Fallback */}
+
+      {/* 2. The Main Page Content */}
       <Component {...pageProps} />
-      
-     
     </>
   );
 }
