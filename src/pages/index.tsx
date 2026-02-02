@@ -53,7 +53,7 @@ export default function ProductConfirmDemo() {
                 onClick={handleConfirm}
                 onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
-                className={`w-full group relative overflow-hidden py-5 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 flex items-center justify-center gap-3
+                className={`w-full group relative overflow-hidden py-5 rounded-2xl font-black  tracking-wider text-sm transition-all duration-300 flex items-center justify-center gap-3
                   ${isOrdered 
                     ? 'bg-emerald-500 text-white shadow-emerald-200' 
                     : 'bg-slate-900 text-white hover:bg-indigo-600 shadow-xl shadow-slate-200 hover:shadow-indigo-200 active:scale-95'
@@ -79,7 +79,7 @@ export default function ProductConfirmDemo() {
               <div className={`absolute -top-1 -right-2 flex items-center gap-1.5 px-3 py-1 bg-white border border-indigo-100 shadow-sm rounded-full transition-all duration-500 transform
                 ${isHovered ? 'opacity-100 -translate-y-2' : 'opacity-0 translate-y-0 pointer-events-none'}`}>
                 <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
-                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-tighter">GTM Listener Active</span>
+                <span className="text-[10px] font-bold text-indigo-600  tracking-tighter">GTM Listener Active</span>
               </div>
             </div>
           </div>
@@ -87,7 +87,7 @@ export default function ProductConfirmDemo() {
           {/* Footer Footer */}
           <div className="px-8 pb-8 flex items-center justify-center gap-2">
             <ShieldCheck size={14} className="text-slate-300" />
-            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.2em]">Secure Demo Environment</span>
+            <span className="text-[10px] font-medium text-slate-400  tracking-[0.2em]">Secure Demo Environment</span>
           </div>
         </div>
 
