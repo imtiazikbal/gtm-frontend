@@ -1,191 +1,101 @@
-// app/page.tsx
 'use client';
-import { useState, useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+import { CheckCircle2, ShoppingBag, ArrowRight, ShieldCheck } from 'lucide-react';
 
-export default function GtmFullTest() {
-  const searchParams = useSearchParams();
-  
-  const [loading, setLoading] = useState(false);
-  const [activeGtm, setActiveGtm] = useState('');
-  const [logs, setLogs] = useState<string[]>([]);
-  const [auth, setAuth] = useState({ token: '', refresh: '' });
-  
-  const [config, setConfig] = useState({
-    containerId: '',
-    buttonText: 'Confirm Order',
-    apiEndpoint: 'https://api.manydial.com/v1/portal/testHook',
-  });
+export default function ProductConfirmDemo() {
+  const [isOrdered, setIsOrdered] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // 1. Session Persistence: Load tokens from localStorage on mount
-  useEffect(() => {
-    const savedToken = localStorage.getItem('auth_token');
-    const savedRefresh = localStorage.getItem('refresh_token');
-    
-    // Check URL first (for new logins)
-    const urlToken = searchParams.get('token');
-    const urlRefresh = searchParams.get('refresh');
-
-    if (urlToken && urlRefresh) {
-      // Save new login to state and storage
-      setAuth({ token: urlToken, refresh: urlRefresh });
-      localStorage.setItem('auth_token', urlToken);
-      localStorage.setItem('refresh_token', urlRefresh);
-      addLog('🔐 New login detected and saved to local storage.');
-      window.history.replaceState({}, document.title, window.location.pathname);
-    } else if (savedToken) {
-      // Restore previous session
-      setAuth({ token: savedToken, refresh: savedRefresh || '' });
-      addLog('🔄 Session restored from local storage.');
-    }
-  }, [searchParams]);
-
-  const addLog = (msg: string) => {
-    setLogs(prev => [`[${new Date().toLocaleTimeString()}] ${msg}`, ...prev]);
-  };
-
-  const handleLogin = () => {
-    window.location.href = 'http://localhost:3000/api/v1/auth/google';
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem('auth_token');
-    localStorage.removeItem('refresh_token');
-    setAuth({ token: '', refresh: '' });
-    addLog('👋 Logged out successfully.');
-  };
-
-  const handleSetup = async () => {
-    // Always use the latest token from state (which is synced with localStorage)
-    if (!auth.token) {
-      addLog('❌ Error: You must login first!');
-      return;
-    }
-
-    setLoading(true);
-    addLog('Requesting GTM Setup from Backend...');
-    
-    try {
-      const res = await fetch('http://localhost:3000/api/v1/gtm/setup-tracking', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${auth.token}` 
-        },
-        body: JSON.stringify({
-          containerId: config.containerId,
-          buttonSelector: config.buttonText,
-          buttonSelectorType: 'text',
-          apiEndpoint: config.apiEndpoint
-        }),
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'Setup failed');
-      
-      addLog(`✅ SUCCESS: Tag & Trigger Created (Version ${data.versionId})`);
-      setActiveGtm(config.containerId);
-    } catch (err) {
-      addLog(`❌ ERROR: ${err instanceof Error ? err.message : 'Unknown error occurred'}`);
-    } finally {
-      setLoading(false);
-    }
+  const handleConfirm = () => {
+    setIsOrdered(true);
+    // Logic for GTM trigger would go here
+    setTimeout(() => setIsOrdered(false), 3000);
   };
 
   return (
-    <main className="min-h-screen bg-slate-100 p-4 md:p-12 font-sans text-slate-900">
-
-      <div className="max-w-5xl mx-auto space-y-8">
-        <header className="flex justify-between items-center bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-          <div>
-            <h1 className="text-2xl font-black text-indigo-600">GTM Automator <span className="text-slate-400 font-light">| Test Suite</span></h1>
-            <p className="text-sm text-slate-500">
-              {auth.token ? `Authenticated Session Active` : 'Waiting for Google Login...'}
-            </p>
-          </div>
-          <div className="flex gap-3">
-             {auth.token && (
-               <button onClick={handleLogout} className="text-slate-500 text-sm hover:text-red-500 transition">
-                 Logout
-               </button>
-             )}
-             <button 
-                onClick={handleLogin} 
-                className={`${auth.token ? 'bg-emerald-500' : 'bg-slate-900'} text-white px-4 py-2 rounded-lg hover:opacity-90 transition shadow-md`}
-              >
-                {auth.token ? '✓ Connected' : 'Connect Google Account'}
-              </button>
-          </div>
-        </header>
-
-        <div className="grid md:grid-cols-2 gap-8">
-          {/* STEP 1: CONFIGURATION */}
-          <section className="bg-white p-8 rounded-2xl shadow-xl border border-indigo-100">
-            <h2 className="text-lg font-bold mb-6 flex items-center gap-2 text-indigo-700">
-              <span className="bg-indigo-600 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs italic">1</span>
-              GTM API Configuration
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="text-xs font-bold uppercase text-slate-400">Container Public ID</label>
-                <input 
-                  className="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none font-mono text-indigo-600" 
-                  value={config.containerId}
-                  onChange={(e) => setConfig({...config, containerId: e.target.value})}
-                />
-              </div>
-              <div>
-                <label className="text-xs font-bold uppercase text-slate-400">Target Button Text</label>
-                <input 
-                  className="w-full mt-1 p-3 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" 
-                  value={config.buttonText}
-                  onChange={(e) => setConfig({...config, buttonText: e.target.value})}
-                />
-              </div>
-              <button 
-                onClick={handleSetup}
-                disabled={loading || !config.containerId || !auth.token}
-                className="w-full py-4 bg-indigo-600 text-white rounded-xl font-bold hover:bg-indigo-700 disabled:bg-slate-300 transition-all shadow-lg shadow-indigo-200"
-              >
-                {loading ? 'Processing API Call...' : 'Create & Publish Tracking'}
-              </button>
-            </div>
-
-            <div className="mt-8">
-              <h3 className="text-xs font-bold text-slate-400 mb-2 uppercase tracking-widest">System Logs</h3>
-              <div className="bg-slate-900 rounded-xl p-4 h-44 overflow-y-auto font-mono text-[10px] text-indigo-300 border border-slate-800 scrollbar-hide">
-                {logs.length === 0 ? <div className="opacity-30 underline italic">No logs recorded...</div> : logs.map((l, i) => <div key={i} className="mb-1">{l}</div>)}
-              </div>
-            </div>
-          </section>
-
-          {/* STEP 2: SANDBOX */}
-          <section className="bg-white p-8 rounded-2xl shadow-xl border border-emerald-100 relative overflow-hidden">
-            <div className="absolute top-0 right-0 bg-emerald-500 text-white px-4 py-1 text-xs font-bold rounded-bl-xl tracking-tighter">LIVE SITE PREVIEW</div>
-            <h2 className="text-lg font-bold mb-6 flex items-center gap-2 text-emerald-700">
-              <span className="bg-emerald-500 text-white w-6 h-6 rounded-full flex items-center justify-center text-xs italic">2</span>
-              Interactive Sandbox
-            </h2>
-            
-            <div className="bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl p-12 flex flex-col items-center justify-center min-h-[250px]">
-              <div className="mb-8 text-center">
-                <p className="text-sm text-slate-500 mb-2">Simulate a user interaction</p>
-                <div className="w-20 h-20 bg-white rounded-2xl flex items-center justify-center shadow-inner mb-4 mx-auto text-3xl">🛍️</div>
-              </div>
-
-              <button 
-                className="px-12 py-5 bg-emerald-500 text-white rounded-2xl text-xl font-black hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-emerald-200 uppercase tracking-tight"
-              >
-                {config.buttonText}
-              </button>
-            </div>
-
-            <div className="mt-6 p-5 bg-indigo-50 rounded-2xl border border-indigo-100 text-[11px] text-indigo-900 leading-relaxed italic">
-              <strong>Developer Note:</strong> This sandbox is currently listening for <b>{config.buttonText}</b>. Once the GTM container (ID: {activeGtm || 'None'}) loads, clicking this will send a <code>POST</code> request to your Manydial endpoint.
-            </div>
-          </section>
-        </div>
+    <main className="min-h-screen bg-[#F1F5F9] flex items-center justify-center p-6 font-sans">
+      {/* Soft Background Glows */}
+      <div className="fixed inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-200/40 blur-[100px] rounded-full" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-emerald-200/40 blur-[100px] rounded-full" />
       </div>
+
+      <section className="w-full max-w-md">
+        <div className="bg-white/80 backdrop-blur-xl border border-white rounded-[2.5rem] shadow-2xl shadow-slate-200/60 overflow-hidden transition-all duration-500 hover:shadow-indigo-100/50">
+          
+          {/* Header */}
+          <div className="p-8 text-center border-b border-slate-100">
+            <div className="inline-flex p-4 bg-indigo-50 rounded-3xl mb-4 text-indigo-600">
+              <ShoppingBag size={32} strokeWidth={1.5} />
+            </div>
+            <h2 className="text-2xl font-black text-slate-800 tracking-tight">Checkout Demo</h2>
+            <p className="text-slate-500 text-sm mt-1">Interactive Tracking Sandbox</p>
+          </div>
+
+          {/* Product Info */}
+          <div className="p-8 space-y-6">
+            <div className="flex items-center justify-between bg-slate-50/50 p-4 rounded-2xl border border-slate-100">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-xl">
+                  ✨
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-700 text-sm">Premium Subscription</h4>
+                  <p className="text-xs text-slate-400">Monthly Plan</p>
+                </div>
+              </div>
+              <span className="font-bold text-slate-900">$29.00</span>
+            </div>
+
+            {/* Action Button */}
+            <div className="relative pt-2">
+              <button 
+                onClick={handleConfirm}
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+                className={`w-full group relative overflow-hidden py-5 rounded-2xl font-black uppercase tracking-wider text-sm transition-all duration-300 flex items-center justify-center gap-3
+                  ${isOrdered 
+                    ? 'bg-emerald-500 text-white shadow-emerald-200' 
+                    : 'bg-slate-900 text-white hover:bg-indigo-600 shadow-xl shadow-slate-200 hover:shadow-indigo-200 active:scale-95'
+                  }`}
+              >
+                {isOrdered ? (
+                  <>
+                    <CheckCircle2 size={18} />
+                    Order Confirmed
+                  </>
+                ) : (
+                  <>
+                    Confirm Order
+                    <ArrowRight size={18} className={`transition-transform duration-300 ${isHovered ? 'translate-x-1' : ''}`} />
+                  </>
+                )}
+                
+                {/* Visual Feedback Glow */}
+                <div className="absolute inset-0 bg-white/20 opacity-0 group-active:opacity-100 transition-opacity" />
+              </button>
+
+              {/* Tag detection badge */}
+              <div className={`absolute -top-1 -right-2 flex items-center gap-1.5 px-3 py-1 bg-white border border-indigo-100 shadow-sm rounded-full transition-all duration-500 transform
+                ${isHovered ? 'opacity-100 -translate-y-2' : 'opacity-0 translate-y-0 pointer-events-none'}`}>
+                <div className="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-pulse" />
+                <span className="text-[10px] font-bold text-indigo-600 uppercase tracking-tighter">GTM Listener Active</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Footer Footer */}
+          <div className="px-8 pb-8 flex items-center justify-center gap-2">
+            <ShieldCheck size={14} className="text-slate-300" />
+            <span className="text-[10px] font-medium text-slate-400 uppercase tracking-[0.2em]">Secure Demo Environment</span>
+          </div>
+        </div>
+
+        {/* Floating Hint */}
+        <p className="text-center mt-8 text-slate-400 text-xs font-medium">
+          Clicking <span className="text-indigo-500 font-bold">Confirm Order</span> simulates a <br/> standard e-commerce purchase event.
+        </p>
+      </section>
     </main>
   );
 }
