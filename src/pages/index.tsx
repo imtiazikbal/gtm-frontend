@@ -39,15 +39,22 @@ export default function ProductConfirmDemo() {
                 <div className="w-12 h-12 bg-white rounded-xl shadow-sm border border-slate-100 flex items-center justify-center text-xl">
                   ✨
                 </div>
+                <div className='flex flex-col'>
+                  <div>
+                  <h4 className="font-bold text-slate-700 text-sm">Phone</h4>
+                  <input type="number" className="text-xs text-slate-400 border border-slate-200 rounded-md px-2 py-1" />
+                </div>
+
                 <div>
                   <h4 className="font-bold text-slate-700 text-sm">Premium Subscription</h4>
                   <p className="text-xs text-slate-400">Monthly Plan</p>
+                </div>
                 </div>
               </div>
               <span className="font-bold text-slate-900">$29.00</span>
             </div>
 
-            {/* Action Button */}
+            {/* Action Button */}ya
             <div className="relative pt-2">
               <button 
                 onClick={handleConfirm}
