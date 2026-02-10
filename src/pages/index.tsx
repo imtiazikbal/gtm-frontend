@@ -55,7 +55,7 @@ export default function ProductConfirmDemo() {
               ${status === 'success' ? 'bg-emerald-500 text-white' : 'bg-slate-900 text-white hover:bg-indigo-600'}`}
           >
             {status === 'loading' && <Loader2 className="animate-spin" size={20} />}
-            {status === 'success' ? 'Order Confirmed!' : 'অর্ডার কনফার্ম করুন'}
+            {status === 'success' ? 'Order Confirmed!' : 'অর্ডার কনফার্ম করুন >>'}
           </button>
         </div>
       </div>
